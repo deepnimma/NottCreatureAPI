@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# uv
+.python-version
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ruff
+.ruff_cache/
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+.terraform.lock.hcl
+*.tfvars
+!*.tfvars.example
+terraform.tfplan
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Google Cloud credentials
+gcloud-service-key.json
+application_default_credentials.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# aspens graph artifacts (generated — do not commit)
+.claude/graph.json
+.claude/graph-index.json
+.claude/code-map.md

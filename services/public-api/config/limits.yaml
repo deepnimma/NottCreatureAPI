@@ -1,0 +1,13 @@
+tiers:
+  owner:
+    rate_limit: null  # unlimited
+
+  premium:
+    rate_limit:
+      requests_per_minute: 120
+      requests_per_day: 20000
+
+  standard:
+    rate_limit:
+      requests_per_minute: 30
+      requests_per_day: 3000

@@ -1,0 +1,61 @@
+services:
+  public-api:
+    build:
+      context: ./services/public-api
+    ports:
+      - "8000:8000"
+    environment:
+      - FIRESTORE_EMULATOR_HOST=firestore-emulator:8080
+      - GOOGLE_CLOUD_PROJECT=pokemon-tcg-dev
+    depends_on:
+      - firestore-emulator
+    develop:
+      watch:
+        - action: sync
+          path: ./services/public-api
+          target: /app
+
+  admin-api:
+    build:
+      context: ./services/admin-api
+    ports:
+      - "8001:8000"
+    environment:
+      - FIRESTORE_EMULATOR_HOST=firestore-emulator:8080
+      - STORAGE_EMULATOR_HOST=http://fake-gcs:4443
+      - GOOGLE_CLOUD_PROJECT=pokemon-tcg-dev
+      - GCS_BUCKET=pokemon-tcg-images
+      - ADMIN_API_KEY=dev-secret-key
+    depends_on:
+      - firestore-emulator
+      - fake-gcs
+    develop:
+      watch:
+        - action: sync
+          path: ./services/admin-api
+          target: /app
+
+  firestore-emulator:
+    image: google/cloud-sdk:slim
+    command: >
+      gcloud emulators firestore start
+      --host-port=0.0.0.0:8080
+      --project=pokemon-tcg-dev
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  fake-gcs:
+    image: fsouza/fake-gcs-server:latest
+    ports:
+      - "4443:4443"
+    command: ["-scheme", "http", "-port", "4443", "-public-host", "fake-gcs:4443"]
+    volumes:
+      - fake-gcs-data:/data
+
+volumes:
+  fake-gcs-data:

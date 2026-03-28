@@ -1,0 +1,170 @@
+{
+  "version": "2.0",
+  "skills": {
+    "admin-api": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "scope": "all",
+      "alwaysActivate": false,
+      "filePatterns": [
+        "services/admin-api/**/*"
+      ],
+      "promptTriggers": {
+        "keywords": [
+          "admin-api",
+          "admin api",
+          "GCS",
+          "image upload",
+          "ADMIN_API_KEY",
+          "GCS_BUCKET",
+          "admin",
+          "api",
+          "service",
+          "managing",
+          "pokemon",
+          "data",
+          "services"
+        ],
+        "intentPatterns": [
+          "(create|update|fix|add|modify|change|debug|refactor|implement|build).*admin api",
+          "admin api.*(create|update|fix|add|modify|change|debug|refactor|implement|build)",
+          "(create|update|fix|add|modify|change|debug|refactor|implement|build).*image upload",
+          "image upload.*(create|update|fix|add|modify|change|debug|refactor|implement|build)",
+          "(create|update|fix|add|modify|change|debug|refactor|implement|build).*admin.*api"
+        ]
+      }
+    },
+    "base": {
+      "type": "base",
+      "enforcement": "suggest",
+      "priority": "critical",
+      "scope": "all",
+      "alwaysActivate": true,
+      "filePatterns": [],
+      "promptTriggers": {
+        "keywords": [
+          "core",
+          "conventions",
+          "tech",
+          "stack",
+          "project"
+        ],
+        "intentPatterns": []
+      }
+    },
+    "infrastructure": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "scope": "all",
+      "alwaysActivate": false,
+      "filePatterns": [
+        "docker-compose.yml",
+        "terraform/**/*.tf"
+      ],
+      "promptTriggers": {
+        "keywords": [
+          "docker",
+          "compose",
+          "firestore emulator",
+          "fake-gcs",
+          "infrastructure",
+          "emulator",
+          "container",
+          "local",
+          "setup",
+          "firestore",
+          "docker-compose",
+          "terraform"
+        ],
+        "intentPatterns": [
+          "(create|update|fix|add|modify|change|debug|refactor|implement|build).*firestore emulator",
+          "firestore emulator.*(create|update|fix|add|modify|change|debug|refactor|implement|build)"
+        ]
+      }
+    },
+    "public-api": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "scope": "all",
+      "alwaysActivate": false,
+      "filePatterns": [
+        "services/public-api/**/*.py",
+        "services/public-api/config/*.yaml"
+      ],
+      "promptTriggers": {
+        "keywords": [
+          "public-api",
+          "rate limit",
+          "slowapi",
+          "tier",
+          "owner",
+          "premium",
+          "standard",
+          "limits.yaml",
+          "public",
+          "api",
+          "public api",
+          "consumer-facing",
+          "fastapi",
+          "service",
+          "tiered",
+          "rate",
+          "services"
+        ],
+        "intentPatterns": [
+          "(create|update|fix|add|modify|change|debug|refactor|implement|build).*rate limit",
+          "rate limit.*(create|update|fix|add|modify|change|debug|refactor|implement|build)",
+          "(create|update|fix|add|modify|change|debug|refactor|implement|build).*public api",
+          "public api.*(create|update|fix|add|modify|change|debug|refactor|implement|build)",
+          "(create|update|fix|add|modify|change|debug|refactor|implement|build).*public.*api"
+        ]
+      }
+    },
+    "rate-limiting": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "scope": "all",
+      "alwaysActivate": false,
+      "filePatterns": [
+        "services/public-api/config/limits.yaml",
+        "services/public-api/app/middleware/**",
+        "services/public-api/app/dependencies/**"
+      ],
+      "promptTriggers": {
+        "keywords": [
+          "rate limit",
+          "slowapi",
+          "tier",
+          "quota",
+          "rpm",
+          "rpd",
+          "owner",
+          "premium",
+          "standard",
+          "rate",
+          "limiting",
+          "rate limiting",
+          "tier-based",
+          "system",
+          "using",
+          "services",
+          "public-api",
+          "limits",
+          "middleware",
+          "dependencies"
+        ],
+        "intentPatterns": [
+          "(create|update|fix|add|modify|change|debug|refactor|implement|build).*rate limit",
+          "rate limit.*(create|update|fix|add|modify|change|debug|refactor|implement|build)",
+          "(create|update|fix|add|modify|change|debug|refactor|implement|build).*rate limiting",
+          "rate limiting.*(create|update|fix|add|modify|change|debug|refactor|implement|build)",
+          "(create|update|fix|add|modify|change|debug|refactor|implement|build).*rate.*limiting"
+        ]
+      }
+    }
+  }
+}
