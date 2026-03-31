@@ -12,11 +12,20 @@ Python-based Pokemon TCG API with two services (public + admin), Firestore backe
 
 ## Key Commands
 ```bash
-# Local dev (with emulators)
-docker compose up
+# Local dev (with hot-reload via docker compose watch)
+make dev
+
+# Rebuild and start
+make dev-build
 
 # Run tests
-# (check each service's README or pyproject.toml for exact commands)
+make test
+
+# Lint + typecheck
+make lint
+
+# Tear down (removes volumes)
+make down
 ```
 
 ## Skills

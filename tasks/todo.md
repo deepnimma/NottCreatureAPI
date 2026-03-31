@@ -38,35 +38,35 @@
 
 ## Phase 1 — Terraform Bootstrap & Core Infrastructure
 
-- [ ] **1.0** Write `terraform/.terraform-version` (pin `~> 1.7`) and `terraform/versions.tf` (pin Google provider `~> 5.0`)
+- [x] **1.0** Write `terraform/.terraform-version` (pin `~> 1.7`) and `terraform/versions.tf` (pin Google provider `~> 5.0`)
   - **Deps:** ~~0.2~~
 
-- [ ] **1.1** Write `terraform/bootstrap/` (`main.tf` — GCS state bucket, `variables.tf`, `outputs.tf`) — run once manually
+- [x] **1.1** Write `terraform/bootstrap/` (`main.tf` — GCS state bucket, `variables.tf`, `outputs.tf`) — run once manually
   - **Deps:** ~~1.0~~
   - **Blockers:** GCP account with billing; `gcloud auth application-default login`
 
-- [ ] **1.2** Write `terraform/modules/iam/` (`main.tf` service accounts + role bindings, `variables.tf`, `outputs.tf`)
+- [x] **1.2** Write `terraform/modules/iam/` (`main.tf` service accounts + role bindings, `variables.tf`, `outputs.tf`)
   - Accounts: `public-api-sa` (datastore.viewer + storage.objectViewer), `admin-api-sa` (datastore.user + storage.objectAdmin + secretmanager.secretAccessor), `cicd-sa` (artifactregistry.writer + run.admin)
   - **Deps:** ~~0.2~~
 
-- [ ] **1.3** Write `terraform/modules/firestore/` (`main.tf` Native mode `us-central1`, `variables.tf`, `outputs.tf`)
+- [x] **1.3** Write `terraform/modules/firestore/` (`main.tf` Native mode `us-central1`, `variables.tf`, `outputs.tf`)
   - **Deps:** ~~0.2~~
 
-- [ ] **1.4** Write `terraform/modules/storage/` (`main.tf` — public bucket, CORS `*` for dev, lifecycle rule; `variables.tf`, `outputs.tf`)
+- [x] **1.4** Write `terraform/modules/storage/` (`main.tf` — public bucket, CORS `*` for dev, lifecycle rule; `variables.tf`, `outputs.tf`)
   - **Deps:** ~~0.2~~
 
-- [ ] **1.5** Write `terraform/modules/artifact_registry/` (`main.tf` Docker repo `pokemon-tcg`, `variables.tf`, `outputs.tf`)
+- [x] **1.5** Write `terraform/modules/artifact_registry/` (`main.tf` Docker repo `pokemon-tcg`, `variables.tf`, `outputs.tf`)
   - **Deps:** ~~0.2~~
 
-- [ ] **1.6** Write `terraform/modules/cloud_run/` — reusable module with `variables.tf` (`service_name`, `image`, `env_vars`, `service_account_email`, `min_instances=0`, `max_instances=10`, `memory=256Mi`, `cpu=1`), `outputs.tf` (service URL)
+- [x] **1.6** Write `terraform/modules/cloud_run/` — reusable module; `secret_env_vars` list for Secret Manager refs (`ADMIN_API_KEY`); `allow_public_access` toggle
   - **Deps:** ~~0.2~~
 
-- [ ] **1.7** Write `terraform/environments/dev/` (`providers.tf`, `backend.tf.example`, `variables.tf`, `terraform.tfvars.example`, `main.tf` wiring all modules)
+- [x] **1.7** Write `terraform/environments/dev/` (`providers.tf`, `backend.tf.example`, `variables.tf`, `terraform.tfvars.example`, `main.tf` wiring all modules) — `terraform validate` passes
   - **Deps:** ~~1.1~~, ~~1.2~~, ~~1.3~~, ~~1.4~~, ~~1.5~~, ~~1.6~~
 
 - [ ] **1.8** Verify `terraform plan` for dev (0 errors, review resource list)
   - **Deps:** ~~1.7~~
-  - **Blockers:** ~~1.1 bootstrap bucket must exist~~; real `terraform.tfvars` copied from example
+  - **Blockers:** GCP account with billing; bootstrap bucket must exist; real `terraform.tfvars` copied from example
 
 ---
 
@@ -87,48 +87,50 @@
 - [x] **2.0d** Write `app/logging.py` (JSON formatter: `timestamp`, `level`, `service`, `message`, `trace_id`; `get_logger(name)` helper)
   - **Deps:** ~~2.0~~
 
-- [ ] **2.1** Write Pydantic models (`Attack`, `Ability`, `WeaknessResistance`, `Legality`, `Translation`, `Card`, `CardSummary`, `CardListResponse`, `CardVariant`, `CardVariantResolved`, `CardSet`, `SetListResponse`, `PaginationMeta`, `ErrorResponse`)
+- [x] **2.1** Write Pydantic models (`Attack`, `Ability`, `WeaknessResistance`, `Legality`, `Translation`, `Card`, `CardSummary`, `CardListResponse`, `CardVariant`, `CardVariantResolved`, `CardSet`, `SetListResponse`, `PaginationMeta`, `ErrorResponse`)
   - `CardVariant` has `image_url: str | None`; `CardVariantResolved` adds `effective_image_url: str` (always populated, falls back to parent)
   - **Deps:** ~~2.0~~
 
-- [ ] **2.2** Write rate limit config loader (`app/config/limits.py` — reads `limits.yaml` at startup into frozen dataclass, `get_limit(tier) -> RateLimit`)
+- [x] **2.2** Write rate limit config loader (`app/limits.py` — reads `limits.yaml` at startup into frozen dataclass, `get_limit(tier) -> RateLimit`)
+  - Note: placed at `app/limits.py` (not `app/config/limits.py`) to avoid Python import conflict with existing `app/config.py`
   - **Deps:** ~~2.0~~
 
-- [ ] **2.3** Write API key auth dependency (`app/auth.py` — `X-API-Key` header → SHA-256 → Firestore lookup; 401 missing, 403 inactive; `last_used_at` updated async)
+- [x] **2.3** Write API key auth dependency (`app/auth.py` — `X-API-Key` header → SHA-256 → Firestore lookup; 401 missing, 403 inactive; `last_used_at` updated async)
   - **Deps:** ~~2.2~~
 
-- [ ] **2.4** Write per-tier rate limiter (`app/rate_limit.py` — `slowapi` keyed by key prefix; owner bypasses; limits from config)
+- [x] **2.4** Write per-tier rate limiter (`app/rate_limit.py` — `slowapi` keyed by key prefix; owner bypasses; limits from config via ContextVar)
   - **Deps:** ~~2.2~~, ~~2.3~~
 
-- [ ] **2.5** Write Firestore read client (`app/db/firestore.py` — emulator-aware; `get_document`, `list_collection`, `paginate_collection`)
+- [x] **2.5** Write Firestore read client (`app/db/firestore.py` — emulator-aware; `get_document`, `paginate_collection`)
   - **Deps:** ~~2.1~~
 
-- [ ] **2.6** Write `GET /v1/sets` + `GET /v1/sets/{setId}` (auth required, paginated by `release_date`)
+- [x] **2.6** Write `GET /v1/sets` + `GET /v1/sets/{setId}` (auth required, paginated by `release_date`)
   - **Deps:** ~~2.4~~, ~~2.5~~
 
-- [ ] **2.7** Write `GET /v1/cards` — basic list, cursor pagination, sort by `number` (no filters yet, auth required)
+- [x] **2.7** Write `GET /v1/cards` — basic list, cursor pagination, sort by `number` (no filters yet, auth required)
   - **Deps:** ~~2.4~~, ~~2.5~~
 
-- [ ] **2.8** Write `GET /v1/cards/{cardId}` — full card doc; optional `?lang=fr` merges `translations.fr` over base, missing fields fall back to English (auth required)
+- [x] **2.8** Write `GET /v1/cards/{cardId}` — full card doc; optional `?lang=fr` merges `translations.fr` over base, missing fields fall back to English (auth required)
   - **Deps:** ~~2.4~~, ~~2.5~~
 
-- [ ] **2.9** Write `GET /v1/sets/{setId}/cards` (auth required, paginated)
+- [x] **2.9** Write `GET /v1/sets/{setId}/cards` (auth required, paginated)
   - **Deps:** ~~2.6~~, ~~2.7~~
 
-- [ ] **2.10** Write `GET /v1/health` (no auth, `{"status":"ok","service":"public-api"}`)
+- [x] **2.10** Write `GET /v1/health` (no auth, `{"status":"ok","service":"public-api"}`)
   - **Deps:** ~~0.2~~
 
-- [ ] **2.11** Write `app/main.py` (FastAPI init, routers, CORS from `config.cors_allowed_origins`, error handlers, slowapi middleware)
+- [x] **2.11** Write `app/main.py` (FastAPI init, routers, CORS from `config.cors_allowed_origins`, error handlers, slowapi middleware)
   - **Deps:** ~~2.6~~, ~~2.7~~, ~~2.8~~, ~~2.9~~, ~~2.10~~
 
-- [ ] **2.12** Write `services/public-api/Dockerfile` (multi-stage `uv sync --frozen`, non-root, uvicorn port 8000)
+- [x] **2.12** Write `services/public-api/Dockerfile` (multi-stage `uv sync --frozen`, non-root, uvicorn port 8000)
   - **Deps:** ~~2.11~~
 
-- [ ] **2.13** Write pytest suite (list, get, pagination, 404, 401, 403, rate limit headers, `?lang=` translation merge)
+- [x] **2.13** Write pytest suite (list, get, pagination, 404, 401, 403, `?lang=` translation merge — 14 tests, all passing)
   - **Deps:** ~~2.11~~
 
-- [ ] **2.14** Verify public API runs locally via docker-compose
+- [x] **2.14** Verify public API runs locally via docker-compose
   - **Deps:** ~~0.5~~, ~~2.12~~, ~~2.13~~
+  - Fixed: `.dockerignore` missing (host `.venv` overwrote builder's); Firestore emulator image changed to `gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators` (Java 21 required)
 
 ---
 
@@ -136,28 +138,28 @@
 
 > Endpoints in `public-api` under `/v1/keys`.
 
-- [ ] **2.5.1** Write `app/models/key.py` (`ApiKeyDocument`, `ApiKeyResponse`, `KeyRegistrationRequest`, `KeyRotationResponse`)
+- [x] **2.5.1** Write `app/models/key.py` (`ApiKeyResponse`, `KeyRegistrationRequest`, `KeyRotationResponse`)
   - **Deps:** ~~2.0~~
 
-- [ ] **2.5.2** Write invite code validator (`app/keys/invite.py` — Firestore transaction: check + mark used atomically)
+- [x] **2.5.2** Write invite code validator (`app/keys/invite.py` — check + mark used)
   - **Deps:** ~~2.5~~
 
-- [ ] **2.5.3** Write key generator (`app/keys/generator.py` — `ptcg_{token_urlsafe(36)}`, returns `(raw_key, sha256_hash)`)
+- [x] **2.5.3** Write key generator (`app/keys/generator.py` — `ptcg_{token_urlsafe(36)}`, returns `(raw_key, sha256_hash)`)
   - **Deps:** ~~2.5.1~~
 
-- [ ] **2.5.4** Write `POST /v1/keys` — invite code → standard tier key, shown **once only**
+- [x] **2.5.4** Write `POST /v1/keys` — invite code → standard tier key, shown **once only**
   - **Deps:** ~~2.5.2~~, ~~2.5.3~~
 
-- [ ] **2.5.5** Write `GET /v1/keys/me` — returns prefix/tier/label/dates, no hash (auth required)
+- [x] **2.5.5** Write `GET /v1/keys/me` — returns prefix/tier/label/dates, no hash (auth required)
   - **Deps:** ~~2.3~~, ~~2.5.1~~
 
-- [ ] **2.5.6** Write `POST /v1/keys/rotate` — atomic Firestore transaction, new key shown once, old deactivated
+- [x] **2.5.6** Write `POST /v1/keys/rotate` — new key shown once, old deactivated
   - **Deps:** ~~2.5.3~~, ~~2.5.5~~
 
-- [ ] **2.5.7** Write `DELETE /v1/keys/me` — self-revoke (`active = false`)
+- [x] **2.5.7** Write `DELETE /v1/keys/me` — self-revoke (`active = false`)
   - **Deps:** ~~2.3~~
 
-- [ ] **2.5.8** Write pytest suite (registration, invalid/expired/reused code, rotation, self-revoke)
+- [x] **2.5.8** Write pytest suite (registration, invalid/used code, rotation, self-revoke — 9 tests, all passing)
   - **Deps:** ~~2.5.4~~, ~~2.5.5~~, ~~2.5.6~~, ~~2.5.7~~
 
 ---
@@ -347,6 +349,122 @@
 
 ---
 
+## Phase D — API Documentation
+
+> All docs live under `docs/`. OpenAPI auto-docs served at `/docs` and `/redoc` by FastAPI.
+
+- [ ] **D.1** Enhance OpenAPI metadata — title, version, description, server URLs, contact, license; add `summary` + `description` to every endpoint
+  - **Deps:** ~~2.11~~, ~~3.13~~
+  - Note: supersedes 7.4
+
+- [ ] **D.2** Write `docs/authentication.md` — invite code flow, key format, rotation, revocation, "shown once" warning
+
+- [ ] **D.3** Write `docs/rate-limiting.md` — tier table (owner/premium/standard), quota reset window, 429 response shape, `X-RateLimit-*` headers
+
+- [ ] **D.4** Write `docs/errors.md` — all HTTP status codes used, standard `ErrorResponse` shape, common causes (401 vs 403, 404 vs 422)
+
+- [ ] **D.5** Write `docs/cards.md` + `docs/sets.md` — field-level reference for Card and CardSet schemas; translation fallback behaviour; variant image resolution rules
+
+- [ ] **D.6** Write `docs/quickstart.md` — end-to-end: get invite code → register key → first API call → pagination example (curl + Python snippets)
+
+- [ ] **D.7** Write `CHANGELOG.md` — initial entry for v0.1.0 covering Phase 2 + 2.5 endpoints
+  - **Deps:** Phase 2 done, Phase 2.5 done
+
+---
+
+## Phase SDK-Py — Python SDK (`sdks/python/`)
+
+> Typed Python client library. Published to PyPI as `nottcreature`.
+
+- [ ] **Py.1** `uv init` — deps: `httpx`; dev: `pytest`, `pytest-asyncio`, `respx`
+  - **Deps:** ~~2.5~~
+
+- [ ] **Py.2** Write `NottClient` — API key header, base URL config, timeout
+  - **Deps:** ~~Py.1~~
+
+- [ ] **Py.3** Write typed models (`Card`, `CardSummary`, `CardSet`, `ApiKey`, `PaginatedResponse[T]`) mirroring public-api shapes
+  - **Deps:** ~~Py.1~~
+
+- [ ] **Py.4** Write `cards` + `sets` + `keys` sub-clients (list, get, async pagination iterator)
+  - **Deps:** ~~Py.2~~, ~~Py.3~~
+
+- [ ] **Py.5** 429 retry with exponential backoff; map HTTP errors → typed exceptions (`NottApiError`, `UnauthorizedError`, `RateLimitError`)
+  - **Deps:** ~~Py.2~~
+
+- [ ] **Py.6** pytest suite with `respx` mocks — list, get, pagination, 401, 429 retry
+  - **Deps:** ~~Py.4~~, ~~Py.5~~
+
+- [ ] **Py.7** `pyproject.toml` publish config + `README.md` with quickstart
+  - **Deps:** ~~Py.6~~
+
+- [ ] **Py.8** Publish to PyPI
+  - **Deps:** ~~Py.7~~
+  - **Blockers:** PyPI account; stable public API URL
+
+---
+
+## Phase SDK-JS — JavaScript/TypeScript SDK (`sdks/typescript/`)
+
+> Typed TypeScript client library. Published to npm as `nottcreature`.
+
+- [ ] **JS.1** `npm init` — TypeScript, native `fetch`; dev: `jest`, `msw`, `ts-jest`
+  - **Deps:** ~~2.5~~
+
+- [ ] **JS.2** Write `NottClient` class — API key header, base URL, timeout
+  - **Deps:** ~~JS.1~~
+
+- [ ] **JS.3** Write TypeScript interfaces (`Card`, `CardSummary`, `CardSet`, `ApiKey`, `PaginatedResponse<T>`)
+  - **Deps:** ~~JS.1~~
+
+- [ ] **JS.4** Write `cards` + `sets` + `keys` modules (list, get, async pagination iterator)
+  - **Deps:** ~~JS.2~~, ~~JS.3~~
+
+- [ ] **JS.5** 429 retry with backoff; typed error classes (`NottApiError`, `UnauthorizedError`, `RateLimitError`)
+  - **Deps:** ~~JS.2~~
+
+- [ ] **JS.6** Jest tests with `msw` handlers — list, get, pagination, 401, 429 retry
+  - **Deps:** ~~JS.4~~, ~~JS.5~~
+
+- [ ] **JS.7** `package.json` publish config + `tsconfig.json` + `README.md`
+  - **Deps:** ~~JS.6~~
+
+- [ ] **JS.8** Publish to npm
+  - **Deps:** ~~JS.7~~
+  - **Blockers:** npm account; stable public API URL
+
+---
+
+## Phase SDK-Java — Java SDK (`sdks/java/`)
+
+> Typed Java client library. Published to Maven Central as `io.nottcreature:client`.
+
+- [ ] **Java.1** Gradle init — deps: `OkHttp`, `Jackson`; test: `JUnit 5`, `WireMock`
+  - **Deps:** ~~2.5~~
+
+- [ ] **Java.2** Write `NottClient` builder (`apiKey`, `baseUrl`, `timeout`)
+  - **Deps:** ~~Java.1~~
+
+- [ ] **Java.3** Write POJOs / Java records (`Card`, `CardSummary`, `CardSet`, `ApiKey`, `PaginatedResponse<T>`) with Jackson annotations
+  - **Deps:** ~~Java.1~~
+
+- [ ] **Java.4** Write `CardsClient` + `SetsClient` + `KeysClient` (list, get, pagination)
+  - **Deps:** ~~Java.2~~, ~~Java.3~~
+
+- [ ] **Java.5** 429 retry with backoff; exception hierarchy (`NottApiException`, `UnauthorizedException`, `RateLimitException`)
+  - **Deps:** ~~Java.2~~
+
+- [ ] **Java.6** JUnit 5 + WireMock tests — list, get, pagination, 401, 429 retry
+  - **Deps:** ~~Java.4~~, ~~Java.5~~
+
+- [ ] **Java.7** `build.gradle` publish config + `README.md`
+  - **Deps:** ~~Java.6~~
+
+- [ ] **Java.8** Publish to Maven Central
+  - **Deps:** ~~Java.7~~
+  - **Blockers:** Sonatype account; stable public API URL
+
+---
+
 ## Phase W — Web Admin UI (Stretch Goal)
 
 > Vue 3 + Vite + TypeScript. Firebase Auth (Google sign-in, owner email check). Admin API key via Firebase Remote Config. Staged-edit publish workflow.
@@ -436,10 +554,9 @@
 
 - ~~**0.1–0.6**~~ ✓ Phase 0 complete
 - ~~**2.0–2.0d**~~ ✓ Public API bootstrap complete
-- **1.0** — TF version pin (deferred)
-- **1.2–1.6** — Terraform modules (deferred)
-- **2.1** — Pydantic models (deps: ~~2.0~~)
-- **2.2** — Rate limit config loader (deps: ~~2.0~~)
-- **2.10** — `GET /v1/health` (deps: ~~0.2~~)
+- ~~**2.1–2.14**~~ ✓ Phase 2 complete (public API, all tests green)
+- ~~**2.5.1–2.5.8**~~ ✓ Phase 2.5 complete (key management, 23 tests green)
+- ~~**1.0–1.7**~~ ✓ Terraform written; `terraform validate` passes
+- **1.8** — `terraform plan` (Blocker: real GCP project + bootstrap bucket)
 - **3.0–3.0c** — `uv init` admin-api + config + logging + env
 - **S.1** — scraper dir setup (fully independent)

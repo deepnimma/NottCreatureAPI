@@ -1,0 +1,6 @@
+project_id                = "YOUR_GCP_PROJECT_ID"
+region                    = "us-central1"
+images_bucket_name        = "YOUR_PROJECT_ID-pokemon-tcg-images"
+image_public_api          = "us-central1-docker.pkg.dev/YOUR_GCP_PROJECT_ID/pokemon-tcg/public-api:latest"
+image_admin_api           = "us-central1-docker.pkg.dev/YOUR_GCP_PROJECT_ID/pokemon-tcg/admin-api:latest"
+admin_api_key_secret_name = "pokemon-tcg-admin-api-key"

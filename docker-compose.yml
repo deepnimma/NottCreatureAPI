@@ -7,6 +7,7 @@ services:
     environment:
       - FIRESTORE_EMULATOR_HOST=firestore-emulator:8080
       - GOOGLE_CLOUD_PROJECT=pokemon-tcg-dev
+      - LIMITS_CONFIG_PATH=/app/config/limits.yaml
     depends_on:
       - firestore-emulator
     develop:
@@ -36,13 +37,13 @@ services:
           target: /app
 
   firestore-emulator:
-    image: google/cloud-sdk:slim
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators
     command: >
       gcloud emulators firestore start
       --host-port=0.0.0.0:8080
       --project=pokemon-tcg-dev
     ports:
-      - "8080:8080"
+      - "8083:8080"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 5s
