@@ -166,16 +166,16 @@
 
 ## Phase 3 — Admin API
 
-- [ ] **3.0** `uv init` admin-api — add deps (`fastapi`, `uvicorn[standard]`, `google-cloud-firestore`, `google-cloud-storage`, `pydantic`, `pillow`, `python-multipart`; dev: `pytest`, `pytest-asyncio`, `httpx`)
+- [x] **3.0** `uv init` admin-api — add deps (`fastapi`, `uvicorn[standard]`, `google-cloud-firestore`, `google-cloud-storage`, `pydantic`, `pillow`, `python-multipart`; dev: `pytest`, `pytest-asyncio`, `httpx`, `mypy`)
   - **Deps:** ~~0.2~~
 
-- [ ] **3.0a** Write `services/admin-api/.env.example` (`GOOGLE_CLOUD_PROJECT`, `ADMIN_API_KEY`, `GCS_BUCKET`, `FIRESTORE_EMULATOR_HOST`, `STORAGE_EMULATOR_HOST`)
+- [x] **3.0a** Write `services/admin-api/.env.example` (`GOOGLE_CLOUD_PROJECT`, `ADMIN_API_KEY`, `GCS_BUCKET`, `FIRESTORE_EMULATOR_HOST`, `STORAGE_EMULATOR_HOST`)
   - **Deps:** ~~3.0~~
 
-- [ ] **3.0b** Write `app/config.py` (frozen `Settings`, fails fast on missing vars)
+- [x] **3.0b** Write `app/config.py` (frozen `Settings`, fails fast on missing vars)
   - **Deps:** ~~3.0~~
 
-- [ ] **3.0c** Write `app/logging.py` (same JSON logging as public-api)
+- [x] **3.0c** Write `app/logging.py` (same JSON logging as public-api, `service: "admin-api"`)
   - **Deps:** ~~3.0~~
 
 - [ ] **3.1** Write admin auth middleware (`X-Admin-Key` header vs `ADMIN_API_KEY` env → 401)
@@ -558,5 +558,5 @@
 - ~~**2.5.1–2.5.8**~~ ✓ Phase 2.5 complete (key management, 23 tests green)
 - ~~**1.0–1.7**~~ ✓ Terraform written; `terraform validate` passes
 - **1.8** — `terraform plan` (Blocker: real GCP project + bootstrap bucket)
-- **3.0–3.0c** — `uv init` admin-api + config + logging + env
+- ~~**3.0, 3.0a–3.0c**~~ ✓ admin-api bootstrap complete (uv init, config, logging, .env.example)
 - **S.1** — scraper dir setup (fully independent)
